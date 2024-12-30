@@ -1,10 +1,9 @@
 from flask import Flask, jsonify
 import boto3
-from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 
-BUCKET_NAME = 'one2ndemobucket2'
+BUCKET_NAME = 'one2ndemobucket3'
 
 s3_client = boto3.client('s3')
 
@@ -27,8 +26,6 @@ def list_bucket_content(path):
 
         return jsonify({"content": directories + files}), 200
     
-    except ClientError as e:
-        return jsonify({'error': str(e)}), 500
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred: ' + str(e)}), 500
 
