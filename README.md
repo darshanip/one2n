@@ -24,7 +24,7 @@ This project contains the following files:
 
 ### `app.py`
 
-This is http service which exposes GET endpoint for S3 listing
+The app.py file implements a simple HTTP service that exposes a GET endpoint to list the contents of an S3 bucket. It uses the Flask web framework and the Boto3 library to interact with AWS S3.
 
 ### `main.tf`
 
