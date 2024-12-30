@@ -16,6 +16,7 @@ Before you begin, make sure you have the following:
 This project contains the following files:
 
 ```
+├── app.py                # Application code
 ├── main.tf               # Terraform configuration to create AWS resources
 ├── startup-script.sh     # EC2 user-data script to set up the instance
 └── README.md             # Project documentation
