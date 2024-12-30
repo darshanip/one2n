@@ -34,7 +34,7 @@ resource "aws_iam_policy" "s3_bucket_access_policy" {
     Statement : [
       {
         Effect   : "Allow",
-        Action   : ["s3:GetObject","s3:PutObject","s3:ListBucket"],
+        Action   : ["s3:*"],
         Resource : [
           "arn:aws:s3:::one2ndemobucket2",
           "arn:aws:s3:::one2ndemobucket2/*"
@@ -85,7 +85,7 @@ resource "aws_security_group" "app_service_sg" {
 
 # EC2 Instance Resource with startup script and security group
 resource "aws_instance" "app_service_instance" {
-  ami           = "ami-01816d07b1128cd2d" # Amazon Linux 2023 AMI
+  ami           = "ami-012967cc5a8c9f891" 
   instance_type = "t2.micro"
 
   # User data for startup script
