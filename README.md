@@ -16,11 +16,15 @@ Before you begin, make sure you have the following:
 This project contains the following files:
 
 ```
-├── app.py                # Application code
+├── app.py                # Application code for S3 Listing Service
 ├── main.tf               # Terraform configuration to create AWS resources
 ├── startup-script.sh     # EC2 user-data script to set up the instance
 └── README.md             # Project documentation
 ```
+
+### `app.py`
+
+This is http service which exposes GET endpoint for S3 listing
 
 ### `main.tf`
 
