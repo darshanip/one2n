@@ -24,7 +24,8 @@ def list_bucket_content(path):
             for item in response.get('Contents', [])
             if item['Key'] != prefix]
 
-        return jsonify({"content": directories + files}), 200
+        data = directories + files
+        return jsonify({"content": data}), 200
     
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred: ' + str(e)}), 500
