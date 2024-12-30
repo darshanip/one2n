@@ -4,7 +4,7 @@
 sudo yum install -y python3 git
 
 # S3 Bucket name
-BUCKET_NAME="one2ndemobucket4"
+BUCKET_NAME="one2ndemobucket5"
 
 # Download the Python app
 wget https://raw.githubusercontent.com/darshanip/one2n/refs/heads/main/app.py -O ~/app.py
