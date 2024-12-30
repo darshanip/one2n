@@ -1,11 +1,16 @@
 from flask import Flask, jsonify
 import boto3
 from botocore.exceptions import ClientError
+import argparse
 
 app = Flask(__name__)
 
-BUCKET_NAME = 'one2ndemobucket'
+# Argument parser for bucket name
+parser = argparse.ArgumentParser(description="Flask app to list S3 bucket contents.")
+parser.add_argument('--bucket', required=True, help="S3 bucket name")
+args = parser.parse_args()
 
+BUCKET_NAME = args.bucket
 s3_client = boto3.client('s3')
 
 @app.route('/list-bucket-content/', defaults={'path': ''}, methods=['GET'])
