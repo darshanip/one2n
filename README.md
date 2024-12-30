@@ -1,120 +1,139 @@
 
-# HTTP Service to List S3 Bucket Content
+# One2N: EC2 Instance with S3 Bucket Access on AWS
 
-## Problem Statement
+This project demonstrates how to provision an **EC2 instance** on **AWS** that interacts with an **S3 bucket**. The EC2 instance is configured with **IAM roles and policies** that grant access to a specific S3 bucket for reading and writing data.
 
-### Part 1: HTTP Service
-Write an HTTP service in any programming language that exposes the endpoint `GET "http://IP:PORT/list-bucket-content/<path>"`. The endpoint should return the content of an S3 bucket path as specified in the request. If no path is specified, the top-level content is returned.
+## Prerequisites
 
-#### Examples:
-1. **Top-Level Content**:
-    - If the bucket has:
-    ```
-    |_ dir1
-    |_ dir2
-        |_ file1
-        |_ file2
-    ```
-    - `http://IP:PORT/list-bucket-content` should return:
-    ```json
-    {"content": ["dir1", "dir2"]}
-    ```
+Before you begin, make sure you have the following:
 
-2. **Content of a Directory**:
-    - `http://IP:PORT/list-bucket-content/dir1` should return:
-    ```json
-    {"content": []}
-    ```
+- **AWS Account**: You need an AWS account to deploy the resources.
+- **Terraform**: Install Terraform to provision and manage the infrastructure. You can download it from [here](https://www.terraform.io/downloads.html).
+- **AWS CLI**: Install and configure the AWS CLI with your credentials. Instructions are available [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
 
-    - `http://IP:PORT/list-bucket-content/dir2` should return:
-    ```json
-    {"content": ["file1", "file2"]}
-    ```
+## Project Structure
 
-3. **Non-Existing Path**:
-    - Handle errors for non-existing paths, like:
-    ```json
-    {"error": "Path not found"}
-    ```
+This project contains the following files:
 
-### Part 2: Terraform Layout for AWS Infrastructure
+```
+├── main.tf               # Terraform configuration to create AWS resources
+├── startup-script.sh     # EC2 user-data script to set up the instance
+└── README.md             # Project documentation
+```
 
-Write a Terraform layout to provision the necessary infrastructure on AWS and deploy the above code. This should include:
-- An S3 bucket to store the files.
-- An EC2 instance to run the HTTP service.
-- Necessary IAM roles and permissions to allow the EC2 instance to access the S3 bucket.
+### `main.tf`
 
-### Evaluation Criteria
+This is the main Terraform configuration file that provisions the AWS infrastructure. It creates:
 
-- **Code Quality**: The service code should be simple, clean, and adhere to standard coding practices. Well-organized code with proper documentation and comments is expected.
-- **Infrastructure Code**: The Terraform code should be efficient, with a clear understanding of the resources required for the service. Proper handling of security configurations, IAM roles, and permissions is essential.
-- **Error Handling**: The service should gracefully handle errors such as non-existing paths.
-- **Deployment**: The service should be deployed over HTTPS.
-- **Test Cases**: Ensure proper test cases to verify functionality.
-  
-### Bonus Points
+- An S3 bucket
+- IAM roles and policies for EC2 to access the S3 bucket
+- EC2 instance with the necessary IAM role and security group
+- Security group rules for HTTP/HTTPS traffic
 
-- Handle errors for non-existing paths.
-- Ensure that the service is deployed on HTTPS for secure communication.
-- A short video demo recording or a comprehensive README explaining design decisions, assumptions, and the implementation process.
+### `startup-script.sh`
 
-### Assumptions and Clarifications
+This is a bash script executed when the EC2 instance starts. It installs dependencies, configures the instance, and starts an application.
 
-- **Language Choice**: The HTTP service can be written in any of the following languages: Python, Go, Ruby, NodeJS, Java, or any language of choice. In this case, Python is used.
-- **AWS Free Tier**: The deployment is done using an AWS Free Tier account. It is important to turn off unused resources to avoid unnecessary costs.
+## Resources Provisioned
 
-### Deployment Instructions
+### 1. **S3 Bucket**
 
-#### 1. Terraform Setup:
-Ensure you have Terraform installed. The infrastructure is provisioned using the following resources:
-- **S3 Bucket**: For storing files.
-- **EC2 Instance**: Running the HTTP service.
-- **IAM Role and Policy**: Allowing EC2 instance to access the S3 bucket.
-- **Security Group**: Allowing HTTP (80) and HTTPS (443) inbound traffic.
+An S3 bucket named `one2ndemobucket` is created to store and retrieve objects. The bucket has `force_destroy = true`, so it will be deleted if Terraform destroys the resources.
 
-To provision the resources:
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/one2n.git
-   cd one2n
-   ```
+### 2. **IAM Role & Policy**
 
-2. Initialize Terraform:
-   ```bash
-   terraform init
-   ```
+- **IAM Role**: This role allows EC2 instances to assume the permissions defined by the attached IAM policy.
+- **IAM Policy**: The policy grants EC2 instances permission to interact with the S3 bucket (`one2ndemobucket`). The permissions include:
+  - `s3:GetObject`: Read objects from the bucket.
+  - `s3:PutObject`: Upload objects to the bucket.
+  - `s3:ListBucket`: List objects in the bucket.
 
-3. Apply the Terraform configuration:
-   ```bash
-   terraform apply
-   ```
+### 3. **EC2 Instance**
 
-4. The EC2 instance will be deployed and accessible via the public IP generated during the deployment.
+An EC2 instance is provisioned using the Amazon Linux 2023 AMI (`ami-01816d07b1128cd2d`). It is configured with:
+- An IAM role to interact with the S3 bucket
+- A security group to allow HTTP and HTTPS traffic
+- A user-data script to set up the environment
 
-#### 2. HTTP Service Setup:
-- The service will be deployed on the EC2 instance using the startup script (`startup-script.sh`).
-- The script installs necessary dependencies such as Python and Flask, and starts the HTTP service to listen for requests on port 443.
+### 4. **Security Group**
 
-#### 3. Access the Service:
-Once the service is deployed, you can access it using the EC2 public IP and the following endpoints:
-- `https://<EC2_PUBLIC_IP>/list-bucket-content`: To list the top-level contents of the S3 bucket.
-- `https://<EC2_PUBLIC_IP>/list-bucket-content/<path>`: To list the contents of a specific directory within the S3 bucket.
+A security group is created for the EC2 instance to allow inbound traffic on ports:
+- HTTP (port 80)
+- HTTPS (port 443)
 
-#### 4. Example Requests:
-1. `https://<EC2_PUBLIC_IP>/list-bucket-content` → Returns the top-level contents of the S3 bucket.
-2. `https://<EC2_PUBLIC_IP>/list-bucket-content/dir1` → Returns the contents of `dir1`.
-3. `https://<EC2_PUBLIC_IP>/list-bucket-content/dir2` → Returns the contents of `dir2`.
+### 5. **EC2 Instance Configuration**
 
-#### 5. Terminating Resources:
-To avoid unnecessary charges, you can destroy the infrastructure after use:
+The EC2 instance is associated with a public IP address. The instance is provisioned with the necessary IAM role and security group to enable access to the S3 bucket and serve content over HTTP/HTTPS.
+
+## Steps to Deploy
+
+### 1. Clone the Repository
+
+First, clone the repository to your local machine:
+
+```bash
+git clone https://github.com/darshanip/one2n.git
+cd one2n
+```
+
+### 2. Initialize Terraform
+
+Run the following command to initialize Terraform and download required providers:
+
+```bash
+terraform init
+```
+
+### 3. Apply the Terraform Configuration
+
+Apply the Terraform configuration to provision the resources on AWS:
+
+```bash
+terraform apply
+```
+
+Terraform will prompt you for confirmation to create the resources. Type `yes` to proceed.
+
+### 4. EC2 Instance Setup
+
+Once the EC2 instance is initialized, it will automatically run the `startup-script.sh` file. This script:
+- Installs Python 3, Git, and the required Python libraries (`Flask`, `Boto3`).
+- Downloads the `app.py` application script from a specified URL.
+- Generates a self-signed SSL certificate and key using OpenSSL.
+- Starts the application in the background.
+
+### 5. Access the EC2 Instance
+
+Once the EC2 instance is running, you can access the application through its public IP via:
+- HTTP: `http://<EC2_PUBLIC_IP>:80`
+- HTTPS: `https://<EC2_PUBLIC_IP>:443`
+
+You can check the EC2 instance logs by viewing the `app.log` file or using `nohup`.
+
+## IAM Policy Explained
+
+The IAM policy attached to the EC2 instance role grants access to the `one2ndemobucket` and allows the following S3 operations:
+
+- **`s3:GetObject`**: Read objects from the bucket.
+- **`s3:PutObject`**: Upload objects to the bucket.
+- **`s3:ListBucket`**: List objects in the bucket.
+
+This setup ensures that the EC2 instance has the necessary permissions to interact with files in the S3 bucket.
+
+## Security Group Configuration
+
+The EC2 instance is exposed to the internet through the following inbound rules:
+- **HTTP (port 80)**: Allow traffic from any IP address (`0.0.0.0/0`).
+- **HTTPS (port 443)**: Allow traffic from any IP address (`0.0.0.0/0`).
+
+The EC2 instance can send outbound traffic on all ports (`0.0.0.0/0`).
+
+## Clean Up
+
+To remove all the created resources, run the following command:
+
 ```bash
 terraform destroy
 ```
 
----
-
-## Conclusion
-
-This project demonstrates how to create a simple HTTP service to interact with an S3 bucket using Python and deploy it to AWS using Terraform. The service handles directory listings in an S3 bucket and provides secure access through HTTPS.
-
----
+Terraform will prompt you for confirmation to delete the resources. Type `yes` to proceed.
