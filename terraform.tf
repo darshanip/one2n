@@ -4,7 +4,7 @@ provider "aws" {
 
 # S3 Bucket Resource for storing application data
 resource "aws_s3_bucket" "app_data_bucket" {
-  bucket        = "one2ndemobucket3"
+  bucket        = "one2ndemobucket4"
   force_destroy = true
 }
 
@@ -34,10 +34,10 @@ resource "aws_iam_policy" "s3_bucket_access_policy" {
     Statement : [
       {
         Effect   : "Allow",
-        Action   : ["s3:*"],
+        Action   : "s3:*",
         Resource : [
-          "arn:aws:s3:::one2ndemobucket3",
-          "arn:aws:s3:::one2ndemobucket3/*"
+          "arn:aws:s3:::one2ndemobucket4",
+          "arn:aws:s3:::one2ndemobucket4/*"
         ]
       }
     ]
