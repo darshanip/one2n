@@ -1,5 +1,5 @@
 
-# One2N: EC2 Instance with S3 Bucket Access on AWS
+# One2N: S3 Bucket Listing
 
 This project demonstrates how to provision an **EC2 instance** on **AWS** that interacts with an **S3 bucket**. The EC2 instance is configured with **IAM roles and policies** that grant access to a specific S3 bucket for reading and writing data.
 
