@@ -3,7 +3,7 @@ import boto3
 
 app = Flask(__name__)
 
-BUCKET_NAME = 'one2ndemobucket5'
+BUCKET_NAME = 'one2ndemobucket6'
 
 s3_client = boto3.client('s3')
 
@@ -18,11 +18,13 @@ def list_bucket_content(path):
             return jsonify({"error": f"The specified path '{prefix}' does not exist in the bucket."}), 404
 
         directories = [
-            item['Prefix'].rstrip('/').split('/')[-1] for item in response.get('CommonPrefixes', [])]
+            item['Prefix'].rstrip('/').split('/')[-1] for item in response.get('CommonPrefixes', [])
+        ]
         files = [
             item['Key'].split('/')[-1]
             for item in response.get('Contents', [])
-            if item['Key'] != prefix]
+            if item['Key'] != prefix
+        ]
 
         data = directories + files
         return jsonify({"content": data}), 200
