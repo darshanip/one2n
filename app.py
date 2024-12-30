@@ -3,7 +3,7 @@ import boto3
 
 app = Flask(__name__)
 
-BUCKET_NAME = 'one2ndemobucket7'
+BUCKET_NAME = 'one2ndemobucket8'
 
 s3_client = boto3.client('s3')
 
