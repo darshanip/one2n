@@ -2,7 +2,7 @@
 
 # Update and install required packages
 sudo yum update -y
-sudo yum install -y python3 git openssl
+sudo yum install -y python3 git
 
 # S3 Bucket name
 BUCKET_NAME="one2ndemobucket3"
@@ -11,7 +11,6 @@ BUCKET_NAME="one2ndemobucket3"
 wget https://raw.githubusercontent.com/darshanip/one2n/refs/heads/main/app.py -O ~/app.py
 
 # Install Python dependencies (Flask, Boto3)
-sudo pip3 install --upgrade pip
 sudo pip3 install flask boto3
 
 # Generate SSL certificates for secure connections
